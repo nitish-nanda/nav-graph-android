@@ -133,6 +133,7 @@
                 android:textColorHint="@color/black">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDOB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -142,11 +143,20 @@
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="3dp"
+                android:text="Gender"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
             <Spinner
                 android:id="@+id/spinnerGender"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="20dp"
                 android:dropDownHorizontalOffset="45dp" />
 
             <View

@@ -61,7 +61,7 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
     }
 
     private void initSpinner() {
-        String[] genderList = {"Select Gender", "Male", "Female"};
+        String[] genderList = {"Male", "Female"};
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, genderList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -73,7 +73,7 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
         requireActivity().onBackPressed();
     }
 
-    @OnClick(R.id.textInputLayoutDob)
+    @OnClick({R.id.textInputLayoutDob, R.id.etDOB})
     void onClickDOB() {
         Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
@@ -142,10 +142,6 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
         if (layoutPassword.getEditText().getText().toString().length() < 6) {
             layoutPassword.getEditText().setError("Enter Valid Password");
             layoutPassword.getEditText().requestFocus();
-            return false;
-        }
-        if (gender != null && gender.equalsIgnoreCase("Select Gender")) {
-            ToastUtils.shortToast(getActivity(), "Select Valid Gender");
             return false;
         }
         return true;

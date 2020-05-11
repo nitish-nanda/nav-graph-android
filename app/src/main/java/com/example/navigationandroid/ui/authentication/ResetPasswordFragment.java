@@ -37,7 +37,7 @@ public class ResetPasswordFragment extends BaseFragment {
 
     @OnClick(R.id.ivLeft)
     void onClickLeft() {
-        requireActivity().onBackPressed();
+        navController.navigateUp();
     }
 
     @OnClick(R.id.tvDone)
