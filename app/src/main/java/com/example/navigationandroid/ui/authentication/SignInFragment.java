@@ -7,8 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
+
 import com.example.navigationandroid.Base.BaseFragment;
 import com.example.navigationandroid.R;
+import com.example.navigationandroid.Utils.Utils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -57,6 +61,11 @@ public class SignInFragment extends BaseFragment {
     private boolean validate() {
         if (etEmail.getText().toString().isEmpty()) {
             etEmail.setError("Enter Email.");
+            etEmail.requestFocus();
+            return false;
+        }
+        if (!Utils.isValidEmail(etEmail.getText().toString())) {
+            etEmail.setError("Enter valid Email.");
             etEmail.requestFocus();
             return false;
         }

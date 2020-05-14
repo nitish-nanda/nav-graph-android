@@ -145,6 +145,7 @@ public class VerificationFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (etFifth.length() == 1) {
                     stringBuilder.setCharAt(4, s.charAt(0));
+                    hideKeyboard(getView());
                     onClickVerify();
                 }
             }

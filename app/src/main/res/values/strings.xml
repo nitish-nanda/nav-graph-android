@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NavigationAndroid</string>
+    <string name="app_name">Navigation Android</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="todo">TODO</string>
