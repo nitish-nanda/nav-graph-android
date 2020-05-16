@@ -1,4 +1,4 @@
-package com.example.navigationandroid.Utils.Views;
+package com.example.navigationandroid.utils.Views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

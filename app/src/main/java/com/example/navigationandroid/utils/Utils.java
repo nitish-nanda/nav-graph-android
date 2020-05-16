@@ -1,6 +1,5 @@
-package com.example.navigationandroid.Utils;
+package com.example.navigationandroid.utils;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -12,7 +11,7 @@ import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.Calendar;
+import java.util.Random;
 
 public class Utils {
 
@@ -21,17 +20,17 @@ public class Utils {
     }
 
     public static boolean isValidEmail(CharSequence target) {
-        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+        return (TextUtils.isEmpty(target) || !Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
     public static boolean isValidPhone(CharSequence target) {
-        return (!TextUtils.isEmpty(target) && Patterns.PHONE.matcher(target).matches());
+        return (TextUtils.isEmpty(target) || !Patterns.PHONE.matcher(target).matches());
     }
 
 
     public static void openUrl(Context context, String url) {
         if (!URLUtil.isValidUrl(url)) {
-            ToastUtils.longToast(context, "Invalid Url");
+            ToastUtils.longToast("Invalid Url");
             return;
         }
         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -47,4 +46,8 @@ public class Utils {
         textview.setPaintFlags(textview.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
+    public static int generateRandomNumber() {
+        Random r = new Random(System.currentTimeMillis());
+        return ((1 + r.nextInt(2)) * 10000 + r.nextInt(10000));
+    }
 }

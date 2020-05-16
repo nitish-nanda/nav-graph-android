@@ -1,6 +1,7 @@
 package com.example.navigationandroid.ui.authentication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.ContentLoadingProgressBar;
 
 import android.os.Bundle;
 import android.os.Handler;

@@ -1,4 +1,4 @@
-package com.example.navigationandroid.Base;
+package com.example.navigationandroid.base;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.navigationandroid.utils.helper.SharedPreferenceHelper;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -19,6 +21,14 @@ public class BaseFragment extends Fragment {
     private Unbinder unbinder;
 
     protected NavController navController;
+
+    protected SharedPreferenceHelper preferenceHelper;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        preferenceHelper = SharedPreferenceHelper.getInstance();
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -42,7 +52,7 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    protected boolean getKeyboardVisibility(View view) {
+    protected boolean isKeyboardVisible(View view) {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null)

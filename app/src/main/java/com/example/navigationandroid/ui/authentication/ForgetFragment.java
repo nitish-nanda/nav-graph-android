@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.navigationandroid.Base.BaseFragment;
+import com.example.navigationandroid.base.BaseFragment;
 import com.example.navigationandroid.R;
-import com.example.navigationandroid.Utils.Utils;
+import com.example.navigationandroid.utils.Utils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import butterknife.BindView;
@@ -55,7 +55,7 @@ public class ForgetFragment extends BaseFragment {
             etEmail.requestFocus();
             return false;
         }
-        if (!Utils.isValidEmail(etEmail.getText().toString())) {
+        if (Utils.isValidEmail(etEmail.getText().toString())) {
             etEmail.setError("Enter Valid Email");
             etEmail.requestFocus();
             return false;

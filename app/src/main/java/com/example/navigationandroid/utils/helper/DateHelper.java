@@ -1,7 +1,8 @@
-package com.example.navigationandroid.Utils;
+package com.example.navigationandroid.utils.helper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class DateHelper {
@@ -15,12 +16,17 @@ public class DateHelper {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
 
-    public static String getDate(int year, int month, int day) {
+    public static Date getDate(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
-        return dateFormat.format(cal.getTime());
+        return cal.getTime();
     }
 
+    public static String getFormattedDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return dateFormat.format(cal.getTime());
+    }
 }

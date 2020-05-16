@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.navigationandroid.Base.BaseFragment;
+import com.example.navigationandroid.base.BaseFragment;
 import com.example.navigationandroid.R;
 
 import butterknife.BindView;

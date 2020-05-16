@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.navigationandroid.Base.BaseFragment;
+import com.example.navigationandroid.base.BaseFragment;
 import com.example.navigationandroid.R;
 import com.google.android.material.textfield.TextInputEditText;
 

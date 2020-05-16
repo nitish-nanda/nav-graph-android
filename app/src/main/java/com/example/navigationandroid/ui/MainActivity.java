@@ -26,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavGraph navGraph = navController.getGraph();
-        navGraph.setStartDestination(R.id.mainFragment);
-        navController.setGraph(navGraph);
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+//        NavGraph navGraph = navController.getGraph();
+//        navGraph.setStartDestination(R.id.mainFragment);
+//        navController.setGraph(navGraph);
     }
 }

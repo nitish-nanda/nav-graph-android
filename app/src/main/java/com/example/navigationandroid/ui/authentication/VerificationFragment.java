@@ -8,15 +8,19 @@ import androidx.annotation.Nullable;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.example.navigationandroid.Base.BaseFragment;
+import com.example.navigationandroid.base.BaseFragment;
 import com.example.navigationandroid.R;
-import com.example.navigationandroid.Utils.ToastUtils;
+import com.example.navigationandroid.utils.ToastUtils;
+import com.example.navigationandroid.utils.Utils;
+import com.example.navigationandroid.utils.notifications.NotificationEvent;
+import com.example.navigationandroid.utils.notifications.NotificationManagerHelper;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -34,7 +38,7 @@ public class VerificationFragment extends BaseFragment {
     @BindView(R.id.et5)
     public EditText etFifth;
 
-    private String verificationCode;
+    private String verificationCode, otp;
     private StringBuilder stringBuilder;
     private String from;
 
@@ -57,6 +61,20 @@ public class VerificationFragment extends BaseFragment {
         stringBuilder.append("00000");
 
         initListener();
+        sendOTP();
+    }
+
+    private void sendOTP() {
+        //FOR CLEARING SOME EXISTING NOTIFICATION EXISTS
+        NotificationManagerHelper.clearAll();
+
+        NotificationEvent event = new NotificationEvent();
+        event.setTitle(getResources().getString(R.string.app_name));
+        otp = String.valueOf(Utils.generateRandomNumber());
+        String string = "Dear User, " + otp + " is your one time password(OTP).Please enter the OTP to proceed.";
+        event.setBody(string);
+        event.setSubject(string);
+        NotificationManagerHelper.sendNotificationEvent(requireContext(), event);
     }
 
     private void initListener() {
@@ -244,43 +262,48 @@ public class VerificationFragment extends BaseFragment {
         if (!validateCode()) {
             return;
         }
-        if (from == null)
+        if (from == null) {
+            ToastUtils.longToast("Profile verified.");
             navController.navigate(R.id.action_verificationFragment_to_mainFragment);
-        else
+        } else
             navController.navigate(R.id.action_verificationFragment_to_resetPasswordFragment);
     }
 
     private boolean validateCode() {
         if (etFirst.getText().length() == 0) {
-            ToastUtils.shortToast(getActivity(), "Enter Valid Verification Code");
+            ToastUtils.shortToast("Enter Valid Verification Code");
             return false;
         }
         if (etSecond.getText().length() == 0) {
-            ToastUtils.shortToast(getActivity(), "Enter Valid Verification Code");
+            ToastUtils.shortToast("Enter Valid Verification Code");
             return false;
         }
         if (etThird.getText().length() == 0) {
-            ToastUtils.shortToast(getActivity(), "Enter Valid Verification Code");
+            ToastUtils.shortToast("Enter Valid Verification Code");
             return false;
         }
         if (etFourth.getText().length() == 0) {
-            ToastUtils.shortToast(getActivity(), "Enter Valid Verification Code");
+            ToastUtils.shortToast("Enter Valid Verification Code");
             return false;
         }
         if (etFifth.getText().length() == 0) {
-            ToastUtils.shortToast(getActivity(), "Enter Valid Verification Code");
+            ToastUtils.shortToast("Enter Valid Verification Code");
             return false;
         }
         verificationCode = etFirst.getText().toString() + etSecond.getText().toString() +
                 etThird.getText().toString() + etFourth.getText().toString() +
                 etFifth.getText().toString();
 
+        if (!otp.equals(verificationCode)) {
+            ToastUtils.longToast("You enter wrong verification code. Please try again using new OTP.");
+            return false;
+        }
         return true;
     }
 
     @OnClick(R.id.tvResent)
     void onClickResent() {
-
+        sendOTP();
     }
 
 }

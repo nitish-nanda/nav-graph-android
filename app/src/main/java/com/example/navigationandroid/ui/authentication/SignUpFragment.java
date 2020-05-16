@@ -1,6 +1,9 @@
 package com.example.navigationandroid.ui.authentication;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -9,40 +12,53 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.navigationandroid.Base.BaseFragment;
+import com.example.navigationandroid.base.BaseFragment;
 import com.example.navigationandroid.R;
-import com.example.navigationandroid.Utils.DateHelper;
-import com.example.navigationandroid.Utils.ToastUtils;
-import com.example.navigationandroid.Utils.Utils;
-import com.google.android.material.textfield.TextInputLayout;
+import com.example.navigationandroid.models.UserModel;
+import com.example.navigationandroid.utils.ToastUtils;
+import com.example.navigationandroid.utils.helper.CameraHelper;
+import com.example.navigationandroid.utils.helper.DateHelper;
+import com.example.navigationandroid.utils.Utils;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
 
-public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSelectedListener {
+@RuntimePermissions
+public class SignUpFragment extends BaseFragment implements CameraHelper.CameraHelperCallback, AdapterView.OnItemSelectedListener {
 
-    @BindView(R.id.textInputLayoutName)
-    public TextInputLayout layoutName;
-    @BindView(R.id.textInputLayoutEmail)
-    public TextInputLayout layoutEmail;
-    @BindView(R.id.textInputLayoutPhone)
-    public TextInputLayout layoutPhone;
-    @BindView(R.id.textInputLayoutDob)
-    public TextInputLayout layoutDob;
-    @BindView(R.id.textInputLayoutpassword)
-    public TextInputLayout layoutPassword;
+    @BindView(R.id.et_name)
+    public TextInputEditText etName;
+    @BindView(R.id.et_email)
+    public TextInputEditText etEmail;
+    @BindView(R.id.et_phone)
+    public TextInputEditText etPhone;
+    @BindView(R.id.etDOB)
+    public TextInputEditText etDob;
+    @BindView(R.id.et_password)
+    public TextInputEditText etPassword;
 
     @BindView(R.id.spinnerGender)
     public Spinner spinner;
 
-    private String gender;
+    @BindView(R.id.iv_profile)
+    public ImageView ivProfile;
+
+    private String gender, selectedImagePath;
+    private CameraHelper cameraHelper;
+
+    private Date dob;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -52,6 +68,12 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sign_up, container, false);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        cameraHelper = new CameraHelper(requireContext(), this);
     }
 
     @Override
@@ -68,6 +90,29 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
         spinner.setOnItemSelectedListener(this);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        SignUpFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        cameraHelper.onResult(requestCode, resultCode, data);
+    }
+
+    @OnClick(R.id.iv_profile)
+    void onClickProfile() {
+        SignUpFragmentPermissionsDispatcher.pickImageWithPermissionCheck(this);
+    }
+
+    @NeedsPermission({Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void pickImage() {
+        cameraHelper.setCropping(true);
+        cameraHelper.initCameraDialog();
+    }
+
     @OnClick({R.id.ivLeft, R.id.textViewLogin})
     void onClickLeft() {
         requireActivity().onBackPressed();
@@ -79,11 +124,12 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
         int mDay = c.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog dialog = new DatePickerDialog(getActivity(), (view, year, month, dayOfMonth) ->
-        {
-            EditText editText = layoutDob.getEditText();
-            editText.setText(DateHelper.getDate(year, month + 1, dayOfMonth));
-            editText.setSelection(editText.getText().length());
+        if (dob != null)
+            c.setTime(dob);
+        DatePickerDialog dialog = new DatePickerDialog(requireActivity(), (view, year, month, dayOfMonth) -> {
+            dob = DateHelper.getDate(year, month, dayOfMonth);
+            etDob.setText(DateHelper.getFormattedDate(dob));
+            etDob.setSelection(etDob.getText().length());
             spinner.requestFocus();
         }, mYear, mMonth, mDay);
         dialog.getDatePicker().setMaxDate(c.getTimeInMillis());
@@ -95,53 +141,60 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
         if (!validate()) {
             return;
         }
+        UserModel userModel = new UserModel();
+        userModel.setName(etName.getText().toString());
+        userModel.setEmail(etEmail.getText().toString());
+        userModel.setPhone(etPhone.getText().toString());
+        userModel.setDob(etDob.getText().toString());
+        userModel.setPassword(etPassword.getText().toString());
+
         navController.navigate(R.id.action_signUpFragment_to_verificationFragment);
     }
 
     private boolean validate() {
-        if (layoutName.getEditText().getText().toString().isEmpty()) {
-            layoutName.getEditText().setError("Enter Name");
-            layoutName.getEditText().requestFocus();
+        if (etName.getText().toString().isEmpty()) {
+            etName.setError("Enter Name");
+            etName.requestFocus();
             return false;
         }
-        if (layoutName.getEditText().getText().toString().length() < 3) {
-            layoutName.getEditText().setError("Enter Valid Name");
-            layoutName.getEditText().requestFocus();
+        if (etName.getText().toString().length() < 3) {
+            etName.setError("Enter Valid Name");
+            etName.requestFocus();
             return false;
         }
-        if (layoutEmail.getEditText().getText().toString().isEmpty()) {
-            layoutEmail.getEditText().setError("Enter Email");
-            layoutEmail.getEditText().requestFocus();
+        if (etEmail.getText().toString().isEmpty()) {
+            etEmail.setError("Enter Email");
+            etEmail.requestFocus();
             return false;
         }
-        if (!Utils.isValidEmail(layoutEmail.getEditText().getText().toString())) {
-            layoutEmail.getEditText().setError("Enter Valid Email");
-            layoutEmail.getEditText().requestFocus();
+        if (Utils.isValidEmail(etEmail.getText().toString())) {
+            etEmail.setError("Enter Valid Email");
+            etEmail.requestFocus();
             return false;
         }
-        if (layoutPhone.getEditText().getText().toString().isEmpty()) {
-            layoutPhone.getEditText().setError("Enter Phone Number");
-            layoutPhone.getEditText().requestFocus();
+        if (etPhone.getText().toString().isEmpty()) {
+            etPhone.setError("Enter Phone Number");
+            etPhone.requestFocus();
             return false;
         }
-        if (layoutPhone.getEditText().getText().toString().length() < 7) {
-            layoutPhone.getEditText().setError("Enter Valid Phone Number");
-            layoutPhone.getEditText().requestFocus();
+        if (etPhone.getText().toString().length() < 7) {
+            etPhone.setError("Enter Valid Phone Number");
+            etPhone.requestFocus();
             return false;
         }
-        if (layoutDob.getEditText().getText().toString().isEmpty()) {
-            layoutDob.getEditText().setError("Enter Age");
-            layoutDob.getEditText().requestFocus();
+        if (etDob.getText().toString().isEmpty()) {
+            etDob.setError("Enter Age");
+            etDob.requestFocus();
             return false;
         }
-        if (layoutPassword.getEditText().getText().toString().isEmpty()) {
-            layoutPassword.getEditText().setError("Enter Password");
-            layoutPassword.getEditText().requestFocus();
+        if (etPassword.getText().toString().isEmpty()) {
+            etPassword.setError("Enter Password");
+            etPassword.requestFocus();
             return false;
         }
-        if (layoutPassword.getEditText().getText().toString().length() < 6) {
-            layoutPassword.getEditText().setError("Enter Valid Password");
-            layoutPassword.getEditText().requestFocus();
+        if (etPassword.getText().toString().length() < 6) {
+            etPassword.setError("Enter Valid Password");
+            etPassword.requestFocus();
             return false;
         }
         return true;
@@ -155,5 +208,21 @@ public class SignUpFragment extends BaseFragment implements AdapterView.OnItemSe
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void startIntent(Intent intent, int requestCode) {
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public void onSuccessImage(String imagePath) {
+        selectedImagePath = imagePath;
+        ivProfile.setImageURI(Uri.parse(selectedImagePath));
+    }
+
+    @Override
+    public void onErrorImage(String error) {
+        ToastUtils.shortToast(error);
     }
 }
