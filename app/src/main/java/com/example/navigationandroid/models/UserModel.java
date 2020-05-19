@@ -18,5 +18,5 @@ public class UserModel implements Serializable {
     public String password;
     public String imgUrl;
 
-    public String verificationCode;
+    public boolean isVerified;
 }

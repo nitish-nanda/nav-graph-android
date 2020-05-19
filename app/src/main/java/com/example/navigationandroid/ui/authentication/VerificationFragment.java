@@ -17,6 +17,7 @@ import android.widget.EditText;
 
 import com.example.navigationandroid.base.BaseFragment;
 import com.example.navigationandroid.R;
+import com.example.navigationandroid.models.UserModel;
 import com.example.navigationandroid.utils.ToastUtils;
 import com.example.navigationandroid.utils.Utils;
 import com.example.navigationandroid.utils.notifications.NotificationEvent;

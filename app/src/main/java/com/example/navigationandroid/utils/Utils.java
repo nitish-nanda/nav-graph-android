@@ -50,4 +50,35 @@ public class Utils {
         Random r = new Random(System.currentTimeMillis());
         return ((1 + r.nextInt(2)) * 10000 + r.nextInt(10000));
     }
+
+    public static void formatNumber(EditText editText, char insertedCharacter, boolean isInsert) {
+        String string = editText.getText().toString();
+        StringBuilder sb = new StringBuilder(string);
+        if (isInsert)
+            sb.append(insertedCharacter);
+        else
+            sb.deleteCharAt(string.length() - 1);
+        editText.setText(sb);
+        editText.setSelection(editText.getText().length());
+    }
+
+    public static String maskCardNumber(String cardNumber) {
+        cardNumber = cardNumber.replace(" ", "");
+        int var1 = 0;
+        StringBuffer var2;
+        for (var2 = new StringBuffer(); var1 < cardNumber.length(); ++var1) {
+            if (var1 > cardNumber.length() - 5) {
+                var2.append(cardNumber.charAt(var1));
+            } else {
+                if (var1 == 5)
+                    var2.append(" ");
+                else if (var1 % 4 == 0)
+                    var2.append(" ");
+                else
+                    var2.append("*");
+            }
+        }
+        return var2.toString();
+    }
+
 }
