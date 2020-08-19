@@ -12,12 +12,12 @@ public class BaseApp extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
-        instance=this;
+        instance = this;
 
         SharedPreferenceHelper.init(getApplicationContext());
     }
 
-    public static BaseApp getInstance(){
+    public static BaseApp getInstance() {
         return instance;
     }
 }
